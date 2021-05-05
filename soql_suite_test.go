@@ -438,3 +438,17 @@ type ptrSubqueryCriteria struct {
 	Position    *positionCriteria    `soql:"subquery,joiner=OR"`
 	Contactable *contactableCriteria `soql:"subquery,joiner=OR"`
 }
+
+type testGroupBySoqlStruct struct {
+	SelectClause testGroupByNonNestedStruct `soql:"selectClause,tableName=SM_SomeObject__c"`
+	WhereClause  testGroupByQueryCriteria   `soql:"whereClause"`
+	GroupBy      []string                   `soql:"groupByClause"`
+}
+type testGroupByQueryCriteria struct {
+	IncludeNamePattern []string `soql:"likeOperator,fieldName=Name"`
+	Roles              []string `soql:"inOperator,fieldName=Role__c"`
+}
+type testGroupByNonNestedStruct struct {
+	Name      string `soql:"selectColumn,fieldName=Name"`
+	SomeValue string `soql:"selectColumn,fieldName=SomeValue__c"`
+}

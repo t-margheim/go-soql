@@ -68,6 +68,7 @@ const (
 	whereKeyword                    = " WHERE "
 	fromKeyword                     = " FROM "
 	orderByKeyword                  = " ORDER BY "
+	groupByKeyword                  = " GROUP BY "
 	limitKeyword                    = " LIMIT "
 	offsetKeyword                   = " OFFSET "
 	ascKeyword                      = " ASC"
@@ -99,6 +100,8 @@ const (
 	LimitClause = "limitClause"
 	// OffsetClause is the tag to be used when marking the int to be considered for offset clause
 	OffsetClause = "offsetClause"
+	// GroupByClause is the tag to be used when marking the []string to be considered for group by clause
+	GroupByClause = "groupByClause"
 	// LikeOperator is the tag to be used for "like" operator in where clause
 	LikeOperator = "likeOperator"
 	// NotLikeOperator is the tag to be used for "not like" operator in where clause
@@ -207,6 +210,11 @@ var (
 
 	// ErrMultipleOffsetClause error is returned when there are multiple offsetClause in struct
 	ErrMultipleOffsetClause = errors.New("ErrMultipleOffsetClause")
+
+	// ErrInvalidGroupByClause error is returned when field with groupByClause tag is invalid
+	ErrInvalidGroupByClause = errors.New("ErrInvalidGroupByClause")
+	// ErrMultipleGroupByClause error is returned when there are multiple groupByClause in struct
+	ErrMultipleGroupByClause = errors.New("ErrMultipleGroupByClause")
 )
 
 // Order is the struct for defining the order by clause on a per column basis
@@ -674,6 +682,15 @@ func MarshalOrderByClause(v interface{}, s interface{}) (string, error) {
 	return marshalOrderByClause(v, "", s)
 }
 
+func marshalGroupByClause(v interface{}) (string, error) {
+	columnNames, ok := v.([]string)
+	if !ok {
+		return "", ErrInvalidGroupByClause
+	}
+
+	return strings.Join(columnNames, ", "), nil
+}
+
 func marshalWhereClause(v interface{}, tableName, joiner string) (string, error) {
 	var buff strings.Builder
 	reflectedValue, reflectedType, err := getReflectedValueAndType(v)
@@ -953,6 +970,7 @@ func marshal(reflectedValue reflect.Value, reflectedType reflect.Type, childRela
 		orderByClausePresent := false
 		limitClausePresent := false
 		offsetClausePresent := false
+		groupByClausePresent := false
 		var selectSubString strings.Builder
 		var selectValue interface{}
 		var whereValue interface{}
@@ -960,6 +978,7 @@ func marshal(reflectedValue reflect.Value, reflectedType reflect.Type, childRela
 		var orderByValue interface{}
 		var limitValue interface{}
 		var offsetValue interface{}
+		var groupByValue interface{}
 		tableName := ""
 		for i := 0; i < totalFields; i++ {
 			field := reflectedType.Field(i)
@@ -1027,6 +1046,12 @@ func marshal(reflectedValue reflect.Value, reflectedType reflect.Type, childRela
 				}
 				offsetValue = reflectedValue.Field(i).Interface()
 				offsetClausePresent = true
+			case GroupByClause:
+				if groupByClausePresent {
+					return "", ErrMultipleGroupByClause
+				}
+				groupByValue = reflectedValue.Field(i).Interface()
+				groupByClausePresent = true
 			default:
 				return "", ErrInvalidTag
 			}
@@ -1068,6 +1093,19 @@ func marshal(reflectedValue reflect.Value, reflectedType reflect.Type, childRela
 				buff.WriteString(subStr)
 			}
 		}
+
+		if groupByClausePresent {
+			subStr, err := marshalGroupByClause(groupByValue)
+			if err != nil {
+				return "", err
+			}
+
+			if subStr != "" {
+				buff.WriteString(groupByKeyword)
+				buff.WriteString(subStr)
+			}
+		}
+
 		if limitClausePresent {
 			subStr, err := marshalLimitClause(limitValue)
 			if err != nil {

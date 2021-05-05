@@ -349,7 +349,7 @@ var _ = Describe("Marshaller", func() {
 						Roles:                       []string{"db", "dbmgmt"},
 						ExcludeNamePattern:          []string{"-core", "-drp"},
 						AllowNullLastDiscoveredDate: &allowNull,
-						ExcludeIDs:                  []string{"123","456"},
+						ExcludeIDs:                  []string{"123", "456"},
 					}
 
 					expectedClause = "(Host_Name__c LIKE '%-db%' OR Host_Name__c LIKE '%-dbmgmt%') AND Role__r.Name IN ('db','dbmgmt') AND ((NOT Host_Name__c LIKE '%-core%') AND (NOT Host_Name__c LIKE '%-drp%')) AND Tech_Asset__r.Asset_Type_Asset_Type__c = 'SERVER' AND Last_Discovered_Date__c != null AND id NOT IN ('123','456')"
@@ -526,9 +526,9 @@ var _ = Describe("Marshaller", func() {
 					v3 := 20
 					v4 := 25
 					criteria = QueryCriteriaDateLiteralsOperatorsPtr{
-						CreatedDate: &v0,
-						OtherDate: &v2,
-						ClosedDate: &v1,
+						CreatedDate:   &v0,
+						OtherDate:     &v2,
+						ClosedDate:    &v1,
 						ScheduledDate: &v3,
 						DeliveredDate: &v4,
 					}
@@ -615,9 +615,9 @@ var _ = Describe("Marshaller", func() {
 						v3 := 20
 						v4 := 25
 						criteria = QueryCriteriaDateLastNDaysLiteralsOperatorsPtr{
-							CreatedDate: &v0,
-							OtherDate:   &v2,
-							ClosedDate:  &v1,
+							CreatedDate:   &v0,
+							OtherDate:     &v2,
+							ClosedDate:    &v1,
 							ScheduledDate: &v3,
 							DeliveredDate: &v4,
 						}
@@ -1951,6 +1951,25 @@ var _ = Describe("Marshaller", func() {
 					},
 				}
 				expectedQuery = "SELECT Name,Email,Phone FROM Contact WHERE (Title = 'Purchasing Manager' OR (Department = 'Accounting' AND Title LIKE '%Manager%')) AND ((Email != null AND HasOptedOutOfEmail = false) OR (Phone != null AND DoNotCall = false))"
+			})
+
+			It("returns properly constructed soql query", func() {
+				Expect(err).ToNot(HaveOccurred())
+				Expect(actualQuery).To(Equal(expectedQuery))
+			})
+		})
+
+		Context("when valid value with GroupBy is passed as argument", func() {
+			BeforeEach(func() {
+				soqlStruct = testGroupBySoqlStruct{
+					SelectClause: testGroupByNonNestedStruct{},
+					WhereClause: testGroupByQueryCriteria{
+						IncludeNamePattern: []string{"foo", "bar"},
+						Roles:              []string{"admin", "user"},
+					},
+					GroupBy: []string{"SomeValue__c"},
+				}
+				expectedQuery = "SELECT Name,SomeValue__c FROM SM_SomeObject__c WHERE (Name LIKE '%foo%' OR Name LIKE '%bar%') AND Role__c IN ('admin','user') GROUP BY SomeValue__c"
 			})
 
 			It("returns properly constructed soql query", func() {
