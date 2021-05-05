@@ -16,33 +16,62 @@ import (
 )
 
 const (
-	openBrace                     = "("
-	closeBrace                    = ")"
-	orCondition                   = " OR "
-	andCondition                  = " AND "
-	singleQuote                   = "'"
-	safeSingleQuote               = "\\'"
-	comma                         = ","
-	notOperator                   = "NOT "
-	openLike                      = " LIKE '%"
-	closeLike                     = "%'"
-	inOperator                    = " IN "
-	equalsOperator                = " = "
-	period                        = "."
-	null                          = "null"
-	notEqualsOperator             = " != "
-	greaterThanOperator           = " > "
-	greaterThanOrEqualsToOperator = " >= "
-	lessThanOperator              = " < "
-	lessThanOrEqualsToOperator    = " <= "
-	selectKeyword                 = "SELECT "
-	whereKeyword                  = " WHERE "
-	fromKeyword                   = " FROM "
-	orderByKeyword                = " ORDER BY "
-	limitKeyword                  = " LIMIT "
-	offsetKeyword                 = " OFFSET "
-	ascKeyword                    = " ASC"
-	descKeyword                   = " DESC"
+	openBrace                       = "("
+	closeBrace                      = ")"
+	orCondition                     = " OR "
+	andCondition                    = " AND "
+	singleQuote                     = "'"
+	safeSingleQuote                 = "\\'"
+	doubleQuote                     = "\""
+	safeDoubleQuote                 = "\\\""
+	backslash                       = "\\"
+	safeBackslash                   = "\\\\"
+	newLine                         = "\n"
+	safeNewLine                     = "\\n"
+	carriageReturn                  = "\r"
+	safeCarriageReturn              = "\\r"
+	tab                             = "\t"
+	safeTab                         = "\\t"
+	bell                            = "\b"
+	safeBell                        = "\\b"
+	formFeed                        = "\f"
+	safeFormFeed                    = "\\f"
+	underscore                      = "_"
+	safeUnderscore                  = "\\_"
+	percentSign                     = "%"
+	safePercentSign                 = "\\%"
+	comma                           = ","
+	notOperator                     = "NOT "
+	openLike                        = " LIKE '%"
+	closeLike                       = "%'"
+	inOperator                      = " IN "
+	notInOperator                   = " NOT IN "
+	equalsOperator                  = " = "
+	period                          = "."
+	null                            = "null"
+	notEqualsOperator               = " != "
+	greaterThanOperator             = " > "
+	greaterThanOrEqualsToOperator   = " >= "
+	lessThanOperator                = " < "
+	lessThanOrEqualsToOperator      = " <= "
+	greaterNextNDaysOperator        = " > NEXT_N_DAYS:"
+	greaterOrEqualNextNDaysOperator = " >= NEXT_N_DAYS:"
+	equalsNextNDaysOperator         = " = NEXT_N_DAYS:"
+	lessNextNDaysOperator           = " < NEXT_N_DAYS:"
+	lessOrEqualNextNDaysOperator    = " <= NEXT_N_DAYS:"
+	greaterLastNDaysOperator        = " > LAST_N_DAYS:"
+	greaterOrEqualLastNDaysOperator = " >= LAST_N_DAYS:"
+	equalsLastNDaysOperator         = " = LAST_N_DAYS:"
+	lessLastNDaysOperator           = " < LAST_N_DAYS:"
+	lessOrEqualLastNDaysOperator    = " <= LAST_N_DAYS:"
+	selectKeyword                   = "SELECT "
+	whereKeyword                    = " WHERE "
+	fromKeyword                     = " FROM "
+	orderByKeyword                  = " ORDER BY "
+	limitKeyword                    = " LIMIT "
+	offsetKeyword                   = " OFFSET "
+	ascKeyword                      = " ASC"
+	descKeyword                     = " DESC"
 
 	// DateFormat is the golang reference time in the soql dateTime fields format
 	DateFormat = "2006-01-02T15:04:05.000-0700"
@@ -76,6 +105,8 @@ const (
 	NotLikeOperator = "notLikeOperator"
 	// InOperator is the tag to be used for "in" operator in where clause
 	InOperator = "inOperator"
+	// NotInOperator is the tag to be used for "not in" operator in where clause
+	NotInOperator = "notInOperator"
 	// EqualsOperator is the tag to be used for "=" operator in where clause
 	EqualsOperator = "equalsOperator"
 	// NotEqualsOperator is the tag to be used for "!=" operator in where clause
@@ -90,22 +121,53 @@ const (
 	LessThanOperator = "lessThanOperator"
 	// LessThanOrEqualsToOperator is the tag to be used for "<=" operator in where clause
 	LessThanOrEqualsToOperator = "lessThanOrEqualsToOperator"
+	// GreaterNextNDaysOperator is the tag to be used for "> NEXT_N_DAYS:n" operator in where clause
+	GreaterNextNDaysOperator = "greaterNextNDaysOperator"
+	// GreaterOrEqualNextNDaysOperator is the tag to be used for ">= NEXT_N_DAYS:n" operator in where clause
+	GreaterOrEqualNextNDaysOperator = "greaterOrEqualNextNDaysOperator"
+	// EqualsNextNDaysOperator is the tag to be used for "= NEXT_N_DAYS:n" operator in where clause
+	EqualsNextNDaysOperator = "equalsNextNDaysOperator"
+	// LessNextNDaysOperator is the tag to be used for "< NEXT_N_DAYS:n" operator in where clause
+	LessNextNDaysOperator = "lessNextNDaysOperator"
+	// LessOrEqualNextNDaysOperator is the tag to be used for "<= NEXT_N_DAYS:n" operator in where clause
+	LessOrEqualNextNDaysOperator = "lessOrEqualNextNDaysOperator"
+	// GreaterLastNDaysOperator is the tag to be used for "> LAST_N_DAYS:n" operator in where clause
+	GreaterLastNDaysOperator = "greaterLastNDaysOperator"
+	// GreaterOrEqualLastNDaysOperator is the tag to be used for ">= LAST_N_DAYS:n" operator in where clause
+	GreaterOrEqualLastNDaysOperator = "greaterOrEqualLastNDaysOperator"
+	// EqualsLastNDaysOperator is the tag to be used for "= LAST_N_DAYS:n" operator in where clause
+	EqualsLastNDaysOperator = "equalsLastNDaysOperator"
+	// LessLastNDaysOperator is the tag to be used for "< LAST_N_DAYS:n" operator in where clause
+	LessLastNDaysOperator = "lessLastNDaysOperator"
+	// LessOrEqualLastNDaysOperator is the tag to be used for "<= LAST_N_DAYS:n" operator in where clause
+	LessOrEqualLastNDaysOperator = "lessOrEqualLastNDaysOperator"
 
 	// Subquery is the tag to be used for a subquery in a where clause
 	Subquery = "subquery"
 )
 
 var clauseBuilderMap = map[string]func(v interface{}, fieldName string) (string, error){
-	LikeOperator:                  buildLikeClause,
-	NotLikeOperator:               buildNotLikeClause,
-	InOperator:                    buildInClause,
-	EqualsOperator:                buildEqualsClause,
-	NullOperator:                  buildNullClause,
-	NotEqualsOperator:             buildNotEqualsClause,
-	GreaterThanOperator:           buildGreaterThanClause,
-	GreaterThanOrEqualsToOperator: buildGreaterThanOrEqualsToClause,
-	LessThanOperator:              buildLessThanClause,
-	LessThanOrEqualsToOperator:    buildLessThanOrEqualsToClause,
+	LikeOperator:                    buildLikeClause,
+	NotLikeOperator:                 buildNotLikeClause,
+	InOperator:                      buildInClause,
+	NotInOperator:                   buildNotInClause,
+	EqualsOperator:                  buildEqualsClause,
+	NullOperator:                    buildNullClause,
+	NotEqualsOperator:               buildNotEqualsClause,
+	GreaterThanOperator:             buildGreaterThanClause,
+	GreaterThanOrEqualsToOperator:   buildGreaterThanOrEqualsToClause,
+	LessThanOperator:                buildLessThanClause,
+	LessThanOrEqualsToOperator:      buildLessThanOrEqualsToClause,
+	GreaterNextNDaysOperator:        buildGreaterNextNDaysOperator,
+	GreaterOrEqualNextNDaysOperator: buildGreaterOrEqualNextNDaysOperator,
+	EqualsNextNDaysOperator:         buildEqualsNextNDaysOperator,
+	LessNextNDaysOperator:           buildLessNextNDaysOperator,
+	LessOrEqualNextNDaysOperator:    buildLessOrEqualNextNDaysOperator,
+	GreaterLastNDaysOperator:        buildGreaterLastNDaysOperator,
+	GreaterOrEqualLastNDaysOperator: buildGreaterOrEqualLastNDaysOperator,
+	EqualsLastNDaysOperator:         buildEqualsLastNDaysOperator,
+	LessLastNDaysOperator:           buildLessLastNDaysOperator,
+	LessOrEqualLastNDaysOperator:    buildLessOrEqualLastNDaysOperator,
 }
 
 var (
@@ -159,9 +221,27 @@ type Order struct {
 	IsDesc bool
 }
 
-func sanitizeString(str string) string {
-	return strings.ReplaceAll(str, singleQuote, safeSingleQuote)
+// https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql_select_quotedstringescapes.htm
+var sanitizeCharacters = []string{
+	singleQuote, safeSingleQuote,
+	doubleQuote, safeDoubleQuote,
+	backslash, safeBackslash,
+	newLine, safeNewLine,
+	carriageReturn, safeCarriageReturn,
+	tab, safeTab,
+	bell, safeBell,
+	formFeed, safeFormFeed,
 }
+
+var sanitizeReplacer = strings.NewReplacer(sanitizeCharacters...)
+
+var sanitizeLikeCharacters = append(
+	sanitizeCharacters,
+	underscore, safeUnderscore,
+	percentSign, safePercentSign,
+)
+
+var sanitizeLikeReplacer = strings.NewReplacer(sanitizeLikeCharacters...)
 
 func buildLikeClause(v interface{}, fieldName string) (string, error) {
 	return constructLikeClause(v, fieldName, false)
@@ -194,7 +274,7 @@ func constructLikeClause(v interface{}, fieldName string, exclude bool) (string,
 		}
 		buff.WriteString(fieldName)
 		buff.WriteString(openLike)
-		buff.WriteString(sanitizeString(pattern))
+		buff.WriteString(sanitizeLikeReplacer.Replace(pattern))
 		buff.WriteString(closeLike)
 		if exclude {
 			buff.WriteString(closeBrace)
@@ -207,6 +287,14 @@ func constructLikeClause(v interface{}, fieldName string, exclude bool) (string,
 }
 
 func buildInClause(v interface{}, fieldName string) (string, error) {
+	return constructContainsClause(v, fieldName, inOperator)
+}
+
+func buildNotInClause(v interface{}, fieldName string) (string, error) {
+	return constructContainsClause(v, fieldName, notInOperator)
+}
+
+func constructContainsClause(v interface{}, fieldName string, operator string) (string, error) {
 	var buff strings.Builder
 	var items []string
 	useSingleQuotes := false
@@ -227,7 +315,7 @@ func buildInClause(v interface{}, fieldName string) (string, error) {
 
 	if len(items) > 0 {
 		buff.WriteString(fieldName)
-		buff.WriteString(inOperator)
+		buff.WriteString(operator)
 		buff.WriteString(openBrace)
 	}
 	for indx, item := range items {
@@ -236,7 +324,7 @@ func buildInClause(v interface{}, fieldName string) (string, error) {
 		}
 		if useSingleQuotes {
 			buff.WriteString(singleQuote)
-			buff.WriteString(sanitizeString(item))
+			buff.WriteString(sanitizeReplacer.Replace(item))
 			buff.WriteString(singleQuote)
 		} else {
 			buff.WriteString(item)
@@ -289,6 +377,10 @@ func constructComparisonClause(v interface{}, fieldName, operator string) (strin
 		if !reflect.ValueOf(u).IsNil() {
 			value = fmt.Sprint(reflect.Indirect(reflect.ValueOf(u)))
 		}
+	case *time.Time:
+		if !reflect.ValueOf(u).IsNil() {
+			value = reflect.Indirect(reflect.ValueOf(u)).Interface().(time.Time).Format(DateFormat)
+		}
 	default:
 		return buff.String(), ErrInvalidTag
 	}
@@ -298,11 +390,75 @@ func constructComparisonClause(v interface{}, fieldName, operator string) (strin
 		buff.WriteString(operator)
 		if useSingleQuotes {
 			buff.WriteString(singleQuote)
-			buff.WriteString(sanitizeString(value))
+			buff.WriteString(sanitizeReplacer.Replace(value))
 			buff.WriteString(singleQuote)
 		} else {
 			buff.WriteString(value)
 		}
+	}
+	return buff.String(), nil
+}
+
+func buildGreaterNextNDaysOperator(v interface{}, fieldName string) (string, error) {
+	return constructDateLiteralsClause(v, fieldName, greaterNextNDaysOperator)
+}
+
+func buildGreaterOrEqualNextNDaysOperator(v interface{}, fieldName string) (string, error) {
+	return constructDateLiteralsClause(v, fieldName, greaterOrEqualNextNDaysOperator)
+}
+
+func buildEqualsNextNDaysOperator(v interface{}, fieldName string) (string, error) {
+	return constructDateLiteralsClause(v, fieldName, equalsNextNDaysOperator)
+}
+
+func buildLessNextNDaysOperator(v interface{}, fieldName string) (string, error) {
+	return constructDateLiteralsClause(v, fieldName, lessNextNDaysOperator)
+}
+
+func buildLessOrEqualNextNDaysOperator(v interface{}, fieldName string) (string, error) {
+	return constructComparisonClause(v, fieldName, lessOrEqualNextNDaysOperator)
+
+}
+
+func buildGreaterLastNDaysOperator(v interface{}, fieldName string) (string, error) {
+	return constructDateLiteralsClause(v, fieldName, greaterLastNDaysOperator)
+}
+
+func buildGreaterOrEqualLastNDaysOperator(v interface{}, fieldName string) (string, error) {
+	return constructDateLiteralsClause(v, fieldName, greaterOrEqualLastNDaysOperator)
+}
+
+func buildEqualsLastNDaysOperator(v interface{}, fieldName string) (string, error) {
+	return constructDateLiteralsClause(v, fieldName, equalsLastNDaysOperator)
+}
+
+func buildLessLastNDaysOperator(v interface{}, fieldName string) (string, error) {
+	return constructDateLiteralsClause(v, fieldName, lessLastNDaysOperator)
+}
+
+func buildLessOrEqualLastNDaysOperator(v interface{}, fieldName string) (string, error) {
+	return constructDateLiteralsClause(v, fieldName, lessOrEqualLastNDaysOperator)
+}
+
+func constructDateLiteralsClause(v interface{}, fieldName string, operator string) (string, error) {
+	var buff strings.Builder
+	var value string
+
+	switch u := v.(type) {
+	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
+		value = fmt.Sprint(u)
+	case *int, *int8, *int16, *int32, *int64, *uint, *uint8, *uint16, *uint32, *uint64:
+		if !reflect.ValueOf(u).IsNil() {
+			value = fmt.Sprint(reflect.Indirect(reflect.ValueOf(u)))
+		}
+	default:
+		return buff.String(), ErrInvalidTag
+	}
+
+	if value != "" {
+		buff.WriteString(fieldName)
+		buff.WriteString(operator)
+		buff.WriteString(value)
 	}
 	return buff.String(), nil
 }
@@ -529,11 +685,19 @@ func marshalWhereClause(v interface{}, tableName, joiner string) (string, error)
 		field := reflectedValue.Field(i)
 		fieldType := reflectedType.Field(i)
 		clauseTag := fieldType.Tag.Get(SoqlTag)
+		if clauseTag == "" {
+			continue
+		}
 		clauseKey := getClauseKey(clauseTag)
 		var partialClause string
 		if clauseKey == Subquery {
-			if field.Kind() != reflect.Struct {
+			if field.Kind() != reflect.Struct && field.Kind() != reflect.Ptr {
 				return "", ErrInvalidTag
+			}
+			if field.Kind() == reflect.Ptr {
+				if reflect.ValueOf(field.Interface()).IsNil() {
+					continue
+				}
 			}
 			joiner, err := getJoiner(clauseTag)
 			if err != nil {

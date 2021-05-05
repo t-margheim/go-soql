@@ -38,6 +38,7 @@ type TestQueryCriteria struct {
 	AssetType                   string   `soql:"equalsOperator,fieldName=Tech_Asset__r.Asset_Type_Asset_Type__c"`
 	Status                      string   `soql:"notEqualsOperator,fieldName=Status__c"`
 	AllowNullLastDiscoveredDate *bool    `soql:"nullOperator,fieldName=Last_Discovered_Date__c"`
+	ExcludeIDs                  []string `soql:"notInOperator,fieldName=id"`
 }
 
 type NonSoqlStruct struct {
@@ -196,6 +197,11 @@ type QueryCriteriaWithBooleanType struct {
 	DisableAlerts bool `soql:"equalsOperator,fieldName=Disable_Alerts__c"`
 }
 
+type QueryCriteriaWithNoSoqlTag struct {
+	NUMAEnabled   bool `soql:"equalsOperator,fieldName=NUMA_Enabled__c"`
+	DisableAlerts bool `json:"random_value"`
+}
+
 type QueryCriteriaWithBooleanPtrType struct {
 	NUMAEnabled   *bool `soql:"equalsOperator,fieldName=NUMA_Enabled__c"`
 	DisableAlerts *bool `soql:"equalsOperator,fieldName=Disable_Alerts__c"`
@@ -205,11 +211,42 @@ type QueryCriteriaWithDateTimeType struct {
 	CreatedDate time.Time `soql:"equalsOperator,fieldName=CreatedDate"`
 }
 
+type QueryCriteriaWithPtrDateTimeType struct {
+	CreatedDate  *time.Time `soql:"equalsOperator,fieldName=CreatedDate"`
+	ResolvedDate *time.Time `soql:"equalsOperator,fieldName=ResolvedDate"`
+}
+
 type QueryCriteriaNumericComparisonOperators struct {
 	NumOfCPUCores                    int `soql:"greaterThanOperator,fieldName=Num_of_CPU_Cores__c"`
 	PhysicalCPUCount                 int `soql:"lessThanOperator,fieldName=Physical_CPU_Count__c"`
 	NumOfSuccessivePuppetRunFailures int `soql:"greaterThanOrEqualsToOperator,fieldName=Number_Of_Successive_Puppet_Run_Failures__c"`
 	NumOfCoolanLogFiles              int `soql:"lessThanOrEqualsToOperator,fieldName=Num_Of_Coolan_Log_Files__c"`
+}
+
+type QueryCriteriaDateLiteralsOperatorsInt struct {
+	CreatedDate int `soql:"greaterNextNDaysOperator,fieldName=CreatedDate"`
+	ClosedDate  int `soql:"lessNextNDaysOperator,fieldName=ClosedDate"`
+}
+
+type QueryCriteriaDateLiteralsOperatorsUint struct {
+	CreatedDate uint `soql:"greaterNextNDaysOperator,fieldName=CreatedDate"`
+	ClosedDate  uint `soql:"lessNextNDaysOperator,fieldName=ClosedDate"`
+}
+
+type QueryCriteriaDateLiteralsOperatorsPtr struct {
+	CreatedDate   *int `soql:"greaterNextNDaysOperator,fieldName=CreatedDate"`
+	OtherDate     *int `soql:"equalsNextNDaysOperator,fieldName=OtherDate"`
+	ClosedDate    *int `soql:"lessNextNDaysOperator,fieldName=ClosedDate"`
+	ScheduledDate *int `soql:"lessOrEqualNextNDaysOperator,fieldName=ScheduledDate"`
+	DeliveredDate *int `soql:"greaterOrEqualNextNDaysOperator,fieldName=DeliveredDate"`
+}
+
+type QueryCriteriaDateLastNDaysLiteralsOperatorsPtr struct {
+	CreatedDate   *int `soql:"greaterLastNDaysOperator,fieldName=CreatedDate"`
+	OtherDate     *int `soql:"equalsLastNDaysOperator,fieldName=OtherDate"`
+	ClosedDate    *int `soql:"lessLastNDaysOperator,fieldName=ClosedDate"`
+	ScheduledDate *int `soql:"lessOrEqualLastNDaysOperator,fieldName=ScheduledDate"`
+	DeliveredDate *int `soql:"greaterOrEqualLastNDaysOperator,fieldName=DeliveredDate"`
 }
 
 type QueryCriteriaWithMixedDataTypesAndOperators struct {
@@ -226,6 +263,7 @@ type QueryCriteriaWithMixedDataTypesAndOperators struct {
 	LastRestart                      time.Time `soql:"greaterThanOperator,fieldName=Last_Restart__c"`
 	Memory                           *float64  `soql:"equalsOperator,fieldName=Memory__c"`
 	NumHardDrives                    *int      `soql:"equalsOperator,fieldName=NumHardDrives__c"`
+	ClosedDate                       int       `soql:"greaterNextNDaysOperator,fieldName=ClosedDate"`
 }
 
 type InvalidSelectClause struct {
@@ -389,4 +427,14 @@ type soqlSubQueryInvalidTypeTestStruct struct {
 type invalidSubqueryCriteria struct {
 	Position    string              `soql:"subquery,joiner=OR"`
 	Contactable contactableCriteria `soql:"subquery,joiner=OR"`
+}
+
+type soqlSubQueryPtrTestStruct struct {
+	SelectClause contact             `soql:"selectClause,tableName=Contact"`
+	WhereClause  ptrSubqueryCriteria `soql:"whereClause"`
+}
+
+type ptrSubqueryCriteria struct {
+	Position    *positionCriteria    `soql:"subquery,joiner=OR"`
+	Contactable *contactableCriteria `soql:"subquery,joiner=OR"`
 }
